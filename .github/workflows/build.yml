@@ -16,7 +16,7 @@ jobs:
 
     - name: Build macOS Application
       run: |
-        xcodebuild -project rhr/HandwritingSimulator.xcodeproj \
+        xcodebuild -project HandwritingSimulator.xcodeproj \
                    -scheme HandwritingSimulator \
                    -configuration Release \
                    -sdk macosx \
