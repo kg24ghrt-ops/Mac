@@ -25,7 +25,8 @@ final class HandwritingEngine {
             let xOffset: CGFloat = 40  // left margin
             
             for run in runs {
-                let runFont = run.attributes[.font] as! NSFont
+                let runAttributes = CTRunGetAttributes(run) as! [NSAttributedString.Key: Any]
+                let runFont = runAttributes[.font] as! NSFont
                 let glyphCount = CTRunGetGlyphCount(run)
                 var glyphs = [CGGlyph](repeating: 0, count: glyphCount)
                 var positions = [CGPoint](repeating: .zero, count: glyphCount)

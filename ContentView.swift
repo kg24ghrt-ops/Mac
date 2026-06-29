@@ -50,7 +50,7 @@ struct ContentView: View {
                 Text("Class 11 Mago’s Templates")
                     .font(.caption.bold())
                 ScrollView(.vertical) {
-                    ForEach(SampleTexts.all, id: \.self) { sample in
+                    ForEach(SampleTexts.all, id: \.title) { sample in
                         Button(sample.title) {
                             viewModel.inputText = sample.text
                         }

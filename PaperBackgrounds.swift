@@ -49,7 +49,7 @@ enum PaperBackgrounds {
         // Hole punches
         let holeRadius: CGFloat = 6
         let holeY = size.height * 0.5
-        ctx.setFillColor(NSColor(white: 0.9).cgColor)
+        ctx.setFillColor(NSColor(white: 0.9, alpha: 1.0).cgColor)
         for sign in [-1, 1] {
             let center = CGPoint(x: 20, y: holeY + CGFloat(sign) * 120)
             ctx.addArc(center: center, radius: holeRadius, startAngle: 0, endAngle: .pi*2, clockwise: false)
