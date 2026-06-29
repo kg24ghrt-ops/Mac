@@ -1,0 +1,33 @@
+name: Build and Package macOS App
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Build macOS Application
+      run: |
+        xcodebuild -project rhr/HandwritingSimulator.xcodeproj \
+                   -scheme HandwritingSimulator \
+                   -configuration Release \
+                   -sdk macosx \
+                   CODE_SIGN_IDENTITY="-" \
+                   CODE_SIGNING_REQUIRED=YES \
+                   CODE_SIGNING_ALLOWED=YES \
+                   CONFIGURATION_BUILD_DIR=build_output \
+                   clean build
+
+    - name: Upload Compiled App Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HandwritingSimulator-Mac-Release
+        path: build_output/HandwritingSimulator.app

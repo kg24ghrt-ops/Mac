@@ -1,0 +1,257 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D4E5F6A7B8 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B9 /* App.swift */; };
+		A1B2C3D4E5F6A7C0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7C1 /* ContentView.swift */; };
+		A1B2C3D4E5F6A7C2 /* HandwritingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7C3 /* HandwritingViewModel.swift */; };
+		A1B2C3D4E5F6A7C4 /* HandwritingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7C5 /* HandwritingEngine.swift */; };
+		A1B2C3D4E5F6A7C6 /* HandwritingRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7C7 /* HandwritingRenderer.swift */; };
+		A1B2C3D4E5F6A7C8 /* PaperBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7C9 /* PaperBackgrounds.swift */; };
+		A1B2C3D4E5F6A7CA /* VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7CB /* VideoExporter.swift */; };
+		A1B2C3D4E5F6A7CC /* SampleTexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7CD /* SampleTexts.swift */; };
+		A1B2C3D4E5F6A7CE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7CF /* Extensions.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1B2C3D4E5F6A7B9 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7C1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7C3 /* HandwritingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandwritingViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7C5 /* HandwritingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandwritingEngine.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7C7 /* HandwritingRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandwritingRenderer.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7C9 /* PaperBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperBackgrounds.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7CB /* VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporter.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7CD /* SampleTexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTexts.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7CF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7D1 /* HandwritingSimulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandwritingSimulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A1B2C3D4E5F6A7D2 = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A7D3 /* HandwritingSimulator */,
+				A1B2C3D4E5F6A7D4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6A7D3 /* HandwritingSimulator */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A7B9 /* App.swift */,
+				A1B2C3D4E5F6A7C1 /* ContentView.swift */,
+				A1B2C3D4E5F6A7C3 /* HandwritingViewModel.swift */,
+				A1B2C3D4E5F6A7C5 /* HandwritingEngine.swift */,
+				A1B2C3D4E5F6A7C7 /* HandwritingRenderer.swift */,
+				A1B2C3D4E5F6A7C9 /* PaperBackgrounds.swift */,
+				A1B2C3D4E5F6A7CB /* VideoExporter.swift */,
+				A1B2C3D4E5F6A7CD /* SampleTexts.swift */,
+				A1B2C3D4E5F6A7CF /* Extensions.swift */,
+				A1B2C3D4E5F6A7D0 /* Info.plist */,
+			);
+			path = HandwritingSimulator;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6A7D4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6A7D1 /* HandwritingSimulator.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3D4E5F6A7D5 /* HandwritingSimulator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F6A7D6 /* Build configuration list for PBXNativeTarget "HandwritingSimulator" */;
+			buildPhases = (
+				A1B2C3D4E5F6A7D7 /* Sources */,
+				A1B2C3D4E5F6A7D8 /* Frameworks */,
+				A1B2C3D4E5F6A7D9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HandwritingSimulator;
+			productName = HandwritingSimulator;
+			productReference = A1B2C3D4E5F6A7D1 /* HandwritingSimulator.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3D4E5F6A7DA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+			};
+			buildConfigurationList = A1B2C3D4E5F6A7DB /* Build configuration list for PBXProject "HandwritingSimulator" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3D4E5F6A7D2;
+			productRefGroup = A1B2C3D4E5F6A7D4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3D4E5F6A7D5 /* HandwritingSimulator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F6A7D9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3D4E5F6A7D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6A7B8 /* App.swift in Sources */,
+				A1B2C3D4E5F6A7C0 /* ContentView.swift in Sources */,
+				A1B2C3D4E5F6A7C2 /* HandwritingViewModel.swift in Sources */,
+				A1B2C3D4E5F6A7C4 /* HandwritingEngine.swift in Sources */,
+				A1B2C3D4E5F6A7C6 /* HandwritingRenderer.swift in Sources */,
+				A1B2C3D4E5F6A7C8 /* PaperBackgrounds.swift in Sources */,
+				A1B2C3D4E5F6A7CA /* VideoExporter.swift in Sources */,
+				A1B2C3D4E5F6A7CC /* SampleTexts.swift in Sources */,
+				A1B2C3D4E5F6A7CE /* Extensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F6A7DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F6A7DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F6A7DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = HandwritingSimulator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.HandwritingSimulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F6A7DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = HandwritingSimulator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.HandwritingSimulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3D4E5F6A7DB /* Build configuration list for PBXProject "HandwritingSimulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6A7DC /* Debug */,
+				A1B2C3D4E5F6A7DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F6A7D6 /* Build configuration list for PBXNativeTarget "HandwritingSimulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6A7DE /* Debug */,
+				A1B2C3D4E5F6A7DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1B2C3D4E5F6A7DA /* Project object */;
+}
