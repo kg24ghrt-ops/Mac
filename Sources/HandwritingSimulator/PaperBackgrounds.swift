@@ -5,35 +5,77 @@ enum PaperType: String, CaseIterable {
 }
 
 enum PaperBackgrounds {
+    private static var cachedImages: [PaperType: NSImage] = [:]
+
     static func image(for type: PaperType, size: CGSize) -> NSImage? {
-        // Guard against zero size – prevents crash
-        guard size.width > 0, size.height > 0 else { return nil }
-        
+        // Use a reasonable default size to generate the texture once, then tile
+        let defaultSize = CGSize(width: 800, height: 600)
+        if let cached = cachedImages[type], cached.size == size {
+            return cached
+        }
+
         let image = NSImage(size: size)
         image.lockFocus()
         defer { image.unlockFocus() }
-        
-        // Base white
-        NSColor.white.setFill()
-        NSRect(origin: .zero, size: size).fill()
-        
+
+        // Draw a realistic paper base
+        drawRealisticPaperBase(in: CGRect(origin: .zero, size: size))
+
         guard let ctx = NSGraphicsContext.current?.cgContext else { return nil }
-        
+
         switch type {
         case .lined:
             drawLined(ctx: ctx, size: size)
         case .graph:
             drawGraph(ctx: ctx, size: size)
         case .blank:
-            drawBlankTexture(ctx: ctx, size: size)
+            // Already drawn by base texture
+            break
         }
+        cachedImages[type] = image
         return image
     }
-    
+
+    private static func drawRealisticPaperBase(in rect: CGRect) {
+        // Soft beige/cream background
+        let baseColor = NSColor(calibratedRed: 0.98, green: 0.96, blue: 0.92, alpha: 1.0)
+        baseColor.setFill()
+        rect.fill()
+
+        // Add subtle fiber noise (grains)
+        guard let ctx = NSGraphicsContext.current?.cgContext else { return }
+        let w = Int(rect.width)
+        let h = Int(rect.height)
+        // Low-res grain bitmap
+        let grainSize = 4
+        let cols = w / grainSize
+        let rows = h / grainSize
+        for y in 0..<rows {
+            for x in 0..<cols {
+                let brightness = CGFloat.random(in: 0.93...0.99)
+                let color = NSColor(white: brightness, alpha: 0.3)
+                color.setFill()
+                let grainRect = CGRect(x: x * grainSize, y: y * grainSize, width: grainSize, height: grainSize)
+                grainRect.fill()
+            }
+        }
+
+        // Add very faint spots (stains)
+        for _ in 0..<8 {
+            let spotX = CGFloat.random(in: 0...rect.width)
+            let spotY = CGFloat.random(in: 0...rect.height)
+            let spotRadius = CGFloat.random(in: 20...80)
+            let spotAlpha = CGFloat.random(in: 0.02...0.06)
+            let spotColor = NSColor(calibratedRed: 0.8, green: 0.75, blue: 0.65, alpha: spotAlpha)
+            spotColor.setFill()
+            ctx.fillEllipse(in: CGRect(x: spotX - spotRadius, y: spotY - spotRadius, width: spotRadius*2, height: spotRadius*2))
+        }
+    }
+
     private static func drawLined(ctx: CGContext, size: CGSize) {
-        // Horizontal lines
-        ctx.setStrokeColor(NSColor(calibratedWhite: 0.8, alpha: 0.7).cgColor)
-        ctx.setLineWidth(0.8)
+        // Light blue horizontal lines
+        ctx.setStrokeColor(NSColor(calibratedRed: 0.6, green: 0.7, blue: 0.9, alpha: 0.7).cgColor)
+        ctx.setLineWidth(0.7)
         let spacing: CGFloat = 28
         var y: CGFloat = spacing
         while y < size.height {
@@ -42,26 +84,25 @@ enum PaperBackgrounds {
             ctx.strokePath()
             y += spacing
         }
-        // Red margin
+        // Red margin line
         ctx.setStrokeColor(NSColor.red.withAlphaComponent(0.25).cgColor)
-        ctx.setLineWidth(1.2)
+        ctx.setLineWidth(1.0)
         ctx.move(to: CGPoint(x: 40, y: 0))
         ctx.addLine(to: CGPoint(x: 40, y: size.height))
         ctx.strokePath()
-        
+
         // Hole punches
         let holeRadius: CGFloat = 6
-        let holeY = size.height * 0.5
-        ctx.setFillColor(NSColor(white: 0.9, alpha: 1.0).cgColor)
+        ctx.setFillColor(NSColor(white: 0.88, alpha: 1.0).cgColor)
         for sign in [-1, 1] {
-            let center = CGPoint(x: 20, y: holeY + CGFloat(sign) * 120)
+            let center = CGPoint(x: 20, y: size.height * 0.5 + CGFloat(sign) * 120)
             ctx.addArc(center: center, radius: holeRadius, startAngle: 0, endAngle: .pi*2, clockwise: false)
             ctx.fillPath()
         }
     }
-    
+
     private static func drawGraph(ctx: CGContext, size: CGSize) {
-        ctx.setStrokeColor(NSColor(calibratedWhite: 0.85, alpha: 0.6).cgColor)
+        ctx.setStrokeColor(NSColor(calibratedRed: 0.7, green: 0.8, blue: 0.95, alpha: 0.6).cgColor)
         ctx.setLineWidth(0.5)
         let gridSize: CGFloat = 20
         var x: CGFloat = gridSize
@@ -78,26 +119,5 @@ enum PaperBackgrounds {
             ctx.strokePath()
             y += gridSize
         }
-    }
-    
-    private static func drawBlankTexture(ctx: CGContext, size: CGSize) {
-        // Subtle noise for paper texture
-        let scale = 4
-        let w = Int(size.width) / scale
-        let h = Int(size.height) / scale
-        guard let context = CGContext(data: nil, width: w, height: h,
-                                      bitsPerComponent: 8, bytesPerRow: w,
-                                      space: CGColorSpaceCreateDeviceGray(),
-                                      bitmapInfo: CGImageAlphaInfo.none.rawValue) else { return }
-        for y in 0..<h {
-            for x in 0..<w {
-                let brightness = UInt8.random(in: 245...255)
-                context.setFillColor(gray: CGFloat(brightness)/255, alpha: 1)
-                context.fill(CGRect(x: x, y: y, width: 1, height: 1))
-            }
-        }
-        guard let cgImage = context.makeImage() else { return }
-        let rect = CGRect(origin: .zero, size: size)
-        ctx.draw(cgImage, in: rect)
     }
 }

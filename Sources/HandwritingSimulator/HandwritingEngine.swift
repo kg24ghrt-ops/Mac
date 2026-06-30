@@ -14,35 +14,52 @@ final class HandwritingEngine {
         let rectPath = CGPath(rect: CGRect(origin: .zero, size: paperSize), transform: nil)
         let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), rectPath, nil)
         guard let lines = CTFrameGetLines(frame) as? [CTLine] else { return [] }
-        
+
+        // Font metrics for scaling
+        let unitsPerEm = CGFloat(CTFontGetUnitsPerEm(font))
+        let pointSize = font.pointSize
+        let scale = pointSize / unitsPerEm
+        let scaleTransform = CGAffineTransform(scaleX: scale, y: scale)
+
         var allSubpaths: [(path: CGPath, length: CGFloat)] = []
-        var y: CGFloat = paperSize.height - font.ascender - 10  // top margin 10
-        
+        var y: CGFloat = paperSize.height - font.ascender - 10   // top margin 10 points
+
         for line in lines {
             var lineOrigin = CGPoint.zero
             CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), &lineOrigin)
             let runs = CTLineGetGlyphRuns(line) as! [CTRun]
             let xOffset: CGFloat = 40  // left margin
-            
+
             for run in runs {
                 let runAttributes = CTRunGetAttributes(run) as! [NSAttributedString.Key: Any]
                 let runFont = runAttributes[.font] as! NSFont
+                let runUnitsPerEm = CGFloat(CTFontGetUnitsPerEm(runFont))
+                let runPointSize = runFont.pointSize
+                let runScale = runPointSize / runUnitsPerEm
+
                 let glyphCount = CTRunGetGlyphCount(run)
                 var glyphs = [CGGlyph](repeating: 0, count: glyphCount)
                 var positions = [CGPoint](repeating: .zero, count: glyphCount)
                 CTRunGetGlyphs(run, CFRangeMake(0, 0), &glyphs)
                 CTRunGetPositions(run, CFRangeMake(0, 0), &positions)
-                
+
                 for i in 0..<glyphCount {
                     let glyph = glyphs[i]
                     var pos = positions[i]
                     pos.x += xOffset
                     pos.y += y
-                    if let path = CTFontCreatePathForGlyph(runFont, glyph, nil) {
-                        let decomposed = decompose(path: path)
-                        for sub in decomposed {
-                            var t = CGAffineTransform(translationX: pos.x, y: pos.y)
-                            guard let transformed = sub.copy(using: &t) else { continue }
+
+                    if let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, nil) {
+                        // Scale glyph path from design units to points
+                        var scaling = CGAffineTransform(scaleX: runScale, y: runScale)
+                        guard let scaledPath = glyphPath.copy(using: &scaling) else { continue }
+
+                        // Decompose into sub‑paths (strokes)
+                        let subpaths = decompose(path: scaledPath)
+                        for sub in subpaths {
+                            // Translate to final position on canvas
+                            var translate = CGAffineTransform(translationX: pos.x, y: pos.y)
+                            guard let transformed = sub.copy(using: &translate) else { continue }
                             let len = pathLength(transformed)
                             allSubpaths.append((transformed, len))
                         }
@@ -51,7 +68,7 @@ final class HandwritingEngine {
             }
             y -= (font.ascender + abs(font.descender) + font.leading + 4)  // line spacing
         }
-        
+
         // Build strokes with cumulative lengths
         var cumulative: CGFloat = 0
         var strokes: [Stroke] = []
@@ -61,7 +78,8 @@ final class HandwritingEngine {
         }
         return strokes
     }
-    
+
+    // Decompose a path into individual subpaths (one per moveto … close)
     private func decompose(path: CGPath) -> [CGPath] {
         var subpaths: [CGMutablePath] = []
         var current: CGMutablePath?
@@ -88,7 +106,8 @@ final class HandwritingEngine {
         if let c = current { subpaths.append(c) }
         return subpaths
     }
-    
+
+    // Approximate length of a path (sum of chords of quad/cubic segments)
     private func pathLength(_ path: CGPath) -> CGFloat {
         var length: CGFloat = 0
         var prev: CGPoint?
@@ -101,10 +120,15 @@ final class HandwritingEngine {
                 if let p = prev { length += hypot(pts[0].x - p.x, pts[0].y - p.y) }
                 prev = pts[0]
             case .addQuadCurveToPoint:
-                if let p = prev { length += hypot(pts[1].x - p.x, pts[1].y - p.y) }
+                if let p = prev {
+                    // Chord from start to end
+                    length += hypot(pts[1].x - p.x, pts[1].y - p.y)
+                }
                 prev = pts[1]
             case .addCurveToPoint:
-                if let p = prev { length += hypot(pts[2].x - p.x, pts[2].y - p.y) }
+                if let p = prev {
+                    length += hypot(pts[2].x - p.x, pts[2].y - p.y)
+                }
                 prev = pts[2]
             case .closeSubpath:
                 break
