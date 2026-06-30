@@ -16,21 +16,21 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      # Step 1: Checkout the repository code
+      # Step 1: Fetch source code from the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up official Swift Toolchain
+      # Step 2: Set up official Swift Toolchain runtime environment
       - name: Setup Swift Environment
         uses: SwiftyLab/setup-swift@v1
         with:
           swift-version: '6.0'
 
-      # Step 3: Fetch dependencies
+      # Step 3: Resolve framework dependencies mapped in Package.swift
       - name: Resolve Dependencies
         run: swift package resolve
 
-      # Step 4: Multi-Target Compilation
+      # Step 4: Multi-Target Compilation targeting macOS 11 compatibility
       - name: Build Package
         run: |
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
@@ -52,21 +52,20 @@ jobs:
             echo "Bypassing test sequence: No discrete test suites mapped in Package.swift yet."
           fi
 
-      # Step 6: Autopilot Dynamic Path Discovery Engine
+      # Step 6: Autopilot Path Finder (Saves absolute target path to GITHUB_ENV)
       - name: Locate Compiled Binary File
-        id: binary-locator
         run: |
-          # Use find to locate the exact compiled binary asset location safely across cross-compilation matrix variables
+          # Finds the compiled binary safely, ignoring temporary package artifacts paths
           BINARY_PATH=$(find .build -type f -name "HandwritingSimulator" -not -path "*/.build/artifacts/*" | head -n 1)
           echo "Found binary target at: $BINARY_PATH"
-          echo "path=$BINARY_PATH" >> $GITHUB_OUTPUT
+          echo "TARGET_BINARY_PATH=$BINARY_PATH" >> $GITHUB_ENV
 
-      # Step 7: Upload Final Production Binary (Fixed Upload Step)
+      # Step 7: Final Fixed Upload Step
       - name: Upload Final Production Binary
         uses: actions/upload-artifact@v7
         with:
           name: HandwritingSimulator-Release-${{ matrix.os }}
-          # Points strictly to the dynamically uncovered path generated in Step 6
-          path: ${{ steps.binary-locator.outputs.path }}
+          # Safely evaluates the exact absolute target binary path established in step 6
+          path: ${{ env.TARGET_BINARY_PATH }}
           archive: false
           if-no-files-found: error
