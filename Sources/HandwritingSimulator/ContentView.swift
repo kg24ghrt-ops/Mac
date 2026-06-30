@@ -38,7 +38,7 @@ struct ContentView: View {
                     viewModel.startAnimation()
                 }
                 .disabled(viewModel.isAnimating)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)  // changed from .borderedProminent to .bordered
                 
                 Button("🎥 Export Movie") {
                     viewModel.exportMovie()
