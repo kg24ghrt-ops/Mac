@@ -13,29 +13,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Utilizing both platforms to guarantee absolute multi-platform compiler isolation
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      # Step 1: Checkout code using stable Node20 v4 architecture
+      # Step 1: Checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up official Swift 6 Core Toolchain
+      # Step 2: Set up official Swift Toolchain
       - name: Setup Swift Environment
         uses: SwiftyLab/setup-swift@v1
         with:
           swift-version: '6.0'
 
-      # Step 3: Fetch structural external components
+      # Step 3: Fetch dependencies
       - name: Resolve Dependencies
         run: swift package resolve
 
-      # Step 4: Multi-Target Compilation (with explicit macOS 11 rules)
+      # Step 4: Multi-Target Compilation
       - name: Build Package
         run: |
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            # Enforce backward compatibility down to macOS 11 Big Sur on x86_64 hardware layouts
             swift build -c release --target HandwritingSimulator -Xswiftc -target -Xswiftc x86_64-apple-macos11
           else
             swift build -c release --target HandwritingSimulator
@@ -54,13 +52,21 @@ jobs:
             echo "Bypassing test sequence: No discrete test suites mapped in Package.swift yet."
           fi
 
-      # Step 6: Autopilot Artifact Extraction & Storage (Latest v7 Framework)
+      # Step 6: Autopilot Dynamic Path Discovery Engine
+      - name: Locate Compiled Binary File
+        id: binary-locator
+        run: |
+          # Use find to locate the exact compiled binary asset location safely across cross-compilation matrix variables
+          BINARY_PATH=$(find .build -type f -name "HandwritingSimulator" -not -path "*/.build/artifacts/*" | head -n 1)
+          echo "Found binary target at: $BINARY_PATH"
+          echo "path=$BINARY_PATH" >> $GITHUB_OUTPUT
+
+      # Step 7: Upload Final Production Binary (Fixed Upload Step)
       - name: Upload Final Production Binary
         uses: actions/upload-artifact@v7
         with:
           name: HandwritingSimulator-Release-${{ matrix.os }}
-          # Points directly to the compiled release directory where the package binary output lands
-          path: .build/release/HandwritingSimulator
-          # Using the new 2026 feature to bypass unneeded nesting compression
+          # Points strictly to the dynamically uncovered path generated in Step 6
+          path: ${{ steps.binary-locator.outputs.path }}
           archive: false
           if-no-files-found: error
