@@ -8,14 +8,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest # Uses the standard, high-speed modern GitHub runner
+    runs-on: macos-latest # Standard high-speed GitHub runner
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    # Compiles on modern macOS but explicitly targets the macOS 11 deployment SDK
-    - name: Compile Swift Package for macOS 11 deployment
+    # Run the exact native Swift Package Manager compilation toolchain
+    - name: Compile via Swift Build
       run: |
         swift build -c release \
           --arch x86_64 \
@@ -23,25 +23,15 @@ jobs:
           -Xswiftc -target -Xswiftc x86_64-apple-macosx11.0 \
           -Xswiftc -target -Xswiftc arm64-apple-macosx11.0
 
-    # Assemble the AppKit bundle layout matching your Sources file hierarchy
-    - name: Assemble macOS Bundle Structures
+    # Stage the compiled machine binary directly from the native .build folder
+    - name: Stage Compiled Executable Artifact
       run: |
-        mkdir -p build_output/HandwritingSimulator.app/Contents/MacOS
-        mkdir -p build_output/HandwritingSimulator.app/Contents/Resources
-        
-        # Copy the compiled universal binary out of the build directory
-        cp .build/apple/Products/Release/HandwritingSimulator build_output/HandwritingSimulator.app/Contents/MacOS/
-        
-        # Inject the native metadata property list file
-        cp Info.plist build_output/HandwritingSimulator.app/Contents/
+        mkdir -p build_output
+        cp .build/apple/Products/Release/HandwritingSimulator build_output/
 
-    # Ad-hoc sign the app so it runs cleanly on local deployment targets
-    - name: Ad-hoc Code Sign Application Bundle
-      run: |
-        codesign --force --deep --sign - build_output/HandwritingSimulator.app
-
-    - name: Upload Compiled App Artifact
+    # Upload the pure, compiled machine binary executable directly
+    - name: Upload Binary Executable Artifact
       uses: actions/upload-artifact@v4
       with:
         name: HandwritingSimulator-Mac-Beta-B1
-        path: build_output/HandwritingSimulator.app
+        path: build_output/HandwritingSimulator
