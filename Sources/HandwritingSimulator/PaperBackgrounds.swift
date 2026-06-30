@@ -6,6 +6,9 @@ enum PaperType: String, CaseIterable {
 
 enum PaperBackgrounds {
     static func image(for type: PaperType, size: CGSize) -> NSImage? {
+        // Guard against zero size – prevents crash
+        guard size.width > 0, size.height > 0 else { return nil }
+        
         let image = NSImage(size: size)
         image.lockFocus()
         defer { image.unlockFocus() }
