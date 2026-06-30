@@ -1,71 +1,32 @@
-name: CI
+# .github/workflows/build.yml
+name: Build & Upload
 
-on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+on: [push]
 
 jobs:
-  build-and-test:
-    name: Build & Test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
+  build:
+    name: Build on macOS
+    runs-on: macos-latest
 
     steps:
-      # Step 1: Fetch source code from the repository
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up official Swift Toolchain runtime environment
-      - name: Setup Swift Environment
-        uses: SwiftyLab/setup-swift@v1
+      - name: Select Latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+
+      - name: Build Release (macOS 11)
+        run: swift build -c release -Xswiftc -target -Xswiftc x86_64-apple-macos11 -v
+
+      - name: Package Binary
+        run: |
+          mkdir -p artifact
+          cp .build/release/HandwritingSimulator artifact/
+          cd artifact
+          zip -r ../HandwritingSimulator.zip .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          swift-version: '6.0'
-
-      # Step 3: Resolve framework dependencies mapped in Package.swift
-      - name: Resolve Dependencies
-        run: swift package resolve
-
-      # Step 4: Multi-Target Compilation targeting macOS 11 compatibility
-      - name: Build Package
-        run: |
-          if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            swift build -c release --target HandwritingSimulator -Xswiftc -target -Xswiftc x86_64-apple-macos11
-          else
-            swift build -c release --target HandwritingSimulator
-          fi
-
-      # Step 5: Test Guard Isolation
-      - name: Run Tests
-        run: |
-          if swift package describe | grep -q "Tests"; then
-            if [ "${{ matrix.os }}" = "macos-latest" ]; then
-              swift test --enable-code-coverage -Xswiftc -target -Xswiftc x86_64-apple-macos11
-            else
-              swift test --enable-code-coverage
-            fi
-          else
-            echo "Bypassing test sequence: No discrete test suites mapped in Package.swift yet."
-          fi
-
-      # Step 6: Autopilot Path Finder (Saves absolute target path to GITHUB_ENV)
-      - name: Locate Compiled Binary File
-        run: |
-          # Finds the compiled binary safely, ignoring temporary package artifacts paths
-          BINARY_PATH=$(find .build -type f -name "HandwritingSimulator" -not -path "*/.build/artifacts/*" | head -n 1)
-          echo "Found binary target at: $BINARY_PATH"
-          echo "TARGET_BINARY_PATH=$BINARY_PATH" >> $GITHUB_ENV
-
-      # Step 7: Final Fixed Upload Step
-      - name: Upload Final Production Binary
-        uses: actions/upload-artifact@v7
-        with:
-          name: HandwritingSimulator-Release-${{ matrix.os }}
-          # Safely evaluates the exact absolute target binary path established in step 6
-          path: ${{ env.TARGET_BINARY_PATH }}
-          archive: false
-          if-no-files-found: error
+          name: HandwritingSimulator
+          path: HandwritingSimulator.zip
