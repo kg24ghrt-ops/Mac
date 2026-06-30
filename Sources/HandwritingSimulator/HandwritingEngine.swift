@@ -44,15 +44,16 @@ final class HandwritingEngine {
                     pos.x += xOffset
                     pos.y += y
 
-                    // Single transform: scale to points, then translate to position
+                    // 1. Scale to point size
+                    // 2. Translate to final position (values are in points, NOT divided by scale)
                     var transform = CGAffineTransform(scaleX: scale, y: scale)
-                        .translatedBy(x: pos.x / scale, y: pos.y / scale)
+                        .translatedBy(x: pos.x, y: pos.y)
 
                     guard let glyphPath = CTFontCreatePathForGlyph(runFont, glyph, &transform) else {
                         continue
                     }
 
-                    // Decompose the already‑transformed path into drawing strokes
+                    // Decompose the fully transformed path into drawing strokes
                     let subpaths = decompose(path: glyphPath)
                     for sub in subpaths {
                         let len = pathLength(sub)
