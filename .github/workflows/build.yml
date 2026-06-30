@@ -1,4 +1,4 @@
-name: Build and Package macOS App
+name: CI
 
 on:
   push:
@@ -7,31 +7,60 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  build:
-    runs-on: macos-latest # Standard high-speed GitHub runner
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Utilizing both platforms to guarantee absolute multi-platform compiler isolation
+        os: [ubuntu-latest, macos-latest]
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      # Step 1: Checkout code using stable Node20 v4 architecture
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    # Run the exact native Swift Package Manager compilation toolchain
-    - name: Compile via Swift Build
-      run: |
-        swift build -c release \
-          --arch x86_64 \
-          --arch arm64 \
-          -Xswiftc -target -Xswiftc x86_64-apple-macosx11.0 \
-          -Xswiftc -target -Xswiftc arm64-apple-macosx11.0
+      # Step 2: Set up official Swift 6 Core Toolchain
+      - name: Setup Swift Environment
+        uses: SwiftyLab/setup-swift@v1
+        with:
+          swift-version: '6.0'
 
-    # Stage the compiled machine binary directly from the native .build folder
-    - name: Stage Compiled Executable Artifact
-      run: |
-        mkdir -p build_output
-        cp .build/apple/Products/Release/HandwritingSimulator build_output/
+      # Step 3: Fetch structural external components
+      - name: Resolve Dependencies
+        run: swift package resolve
 
-    # Upload the pure, compiled machine binary executable directly
-    - name: Upload Binary Executable Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: HandwritingSimulator-Mac-Beta-B1
-        path: build_output/HandwritingSimulator
+      # Step 4: Multi-Target Compilation (with explicit macOS 11 rules)
+      - name: Build Package
+        run: |
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            # Enforce backward compatibility down to macOS 11 Big Sur on x86_64 hardware layouts
+            swift build -c release --target HandwritingSimulator -Xswiftc -target -Xswiftc x86_64-apple-macos11
+          else
+            swift build -c release --target HandwritingSimulator
+          fi
+
+      # Step 5: Test Guard Isolation
+      - name: Run Tests
+        run: |
+          if swift package describe | grep -q "Tests"; then
+            if [ "${{ matrix.os }}" = "macos-latest" ]; then
+              swift test --enable-code-coverage -Xswiftc -target -Xswiftc x86_64-apple-macos11
+            else
+              swift test --enable-code-coverage
+            fi
+          else
+            echo "Bypassing test sequence: No discrete test suites mapped in Package.swift yet."
+          fi
+
+      # Step 6: Autopilot Artifact Extraction & Storage (Latest v7 Framework)
+      - name: Upload Final Production Binary
+        uses: actions/upload-artifact@v7
+        with:
+          name: HandwritingSimulator-Release-${{ matrix.os }}
+          # Points directly to the compiled release directory where the package binary output lands
+          path: .build/release/HandwritingSimulator
+          # Using the new 2026 feature to bypass unneeded nesting compression
+          archive: false
+          if-no-files-found: error
